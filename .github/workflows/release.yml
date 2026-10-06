@@ -1,0 +1,50 @@
+name: Build and Release macOS app
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (example: 1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: Source
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: ./test.sh
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Package
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent "build/Negative Harmony MIDI Converter.app" "../Negative-Harmony-MIDI-Converter-macOS.zip"
+          cd ..
+          shasum -a 256 "Negative-Harmony-MIDI-Converter-macOS.zip" > "Negative-Harmony-MIDI-Converter-macOS.zip.sha256"
+
+      - name: Create GitHub Release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" Negative-Harmony-MIDI-Converter-macOS.zip Negative-Harmony-MIDI-Converter-macOS.zip.sha256 --clobber
+          else
+            gh release create "$TAG" Negative-Harmony-MIDI-Converter-macOS.zip Negative-Harmony-MIDI-Converter-macOS.zip.sha256 \
+              --target "${{ github.sha }}" \
+              --title "Negative Harmony MIDI Converter $TAG" \
+              --generate-notes
+          fi
