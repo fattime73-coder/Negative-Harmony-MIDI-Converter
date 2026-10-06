@@ -1,0 +1,37 @@
+# Credentials and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+.netrc
+credentials.json
+secrets.json
+
+# macOS and editor files
+.DS_Store
+._*
+*.swp
+*.swo
+*~
+
+# Swift / Xcode generated files
+.build/
+.swiftpm/
+build/
+Build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.app/
+*.dSYM/
+*.ipa
+*.xcarchive/
+
+# Local test output
+Source/Tests/gui-smoke-result.json
+*.log
