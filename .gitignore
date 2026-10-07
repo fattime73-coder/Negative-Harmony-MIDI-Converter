@@ -35,3 +35,7 @@ xcuserdata/
 # Local test output
 Source/Tests/gui-smoke-result.json
 *.log
+
+# Local Xcode state and private credentials
+client_secret*.json
+credentials*.json
